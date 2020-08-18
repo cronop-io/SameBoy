@@ -1137,7 +1137,15 @@ static bool _c_start_function_trace(GB_gameboy_t *gb, char *arguments, char *mod
 
 static bool _c_stop_function_trace(GB_gameboy_t *gb, char *arguments, char *modifiers, const debugger_command_t *command)
 {
-    GB_coverage_write_result(&gb->function_coverage, arguments);
+    if (arguments == NULL || arguments[0] == '\0')
+    {
+        GB_coverage_write_result(&gb->function_coverage, "sameboy.cov");
+    }
+    else
+    {
+        GB_coverage_write_result(&gb->function_coverage, arguments);
+    }
+    
     GB_coverage_reset(&gb->function_coverage);
     return true;
 }

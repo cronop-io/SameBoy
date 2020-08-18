@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define GB_coverage_INITIAL_CAPACITY 0x400
 
@@ -33,10 +34,18 @@ bool GB_coverage_write_result(GB_coverage* pCov, char* pPath)
     assert(NULL != pCov);
     assert(NULL != pPath);
 
+    FILE* pCoverageFile = NULL;
     HTNode* node = NULL;
 	HTNode* next = NULL;
 
     pCov->enabled = false;
+
+    pCoverageFile = fopen(pPath, "w");
+
+    if (pCoverageFile == NULL)
+    {
+        return false;
+    }
 
     for (uint32_t chain = 0; chain < pCov->covered_functions.capacity; chain++) 
     {
@@ -47,12 +56,15 @@ bool GB_coverage_write_result(GB_coverage* pCov, char* pPath)
             {
                 uint32_t key = *(uint32_t*)node->key;
                 uint32_t value = *(uint32_t*)node->value;
-                printf("Node: 0x%08x, %u\n", key, value);
+                fprintf(pCoverageFile,"0x%08x:%u\n", key, value);
             }
             next = node->next;
 			node = next;
 		}
 	}
+
+    fflush(pCoverageFile);
+    fclose(pCoverageFile);
     return true;
 }
 
@@ -63,8 +75,6 @@ void GB_coverage_add_data_point(GB_coverage* pCov, uint16_t bank, uint16_t addre
     if (pCov->enabled)
     {
         uint32_t key = ((uint32_t)bank) << 16 | address;
-
-        //printf("Insert: 0x%08x\n", key);
 
         if (NULL == ht_lookup(&pCov->covered_functions,&key))
         {
