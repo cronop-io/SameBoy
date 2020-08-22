@@ -36,7 +36,7 @@ bool GB_coverage_write_result(GB_coverage* pCov, char* pPath)
 
     FILE* pCoverageFile = NULL;
     HTNode* node = NULL;
-	HTNode* next = NULL;
+    HTNode* next = NULL;
 
     pCov->enabled = false;
 
@@ -49,8 +49,8 @@ bool GB_coverage_write_result(GB_coverage* pCov, char* pPath)
 
     for (uint32_t chain = 0; chain < pCov->covered_functions.capacity; chain++) 
     {
-		node = pCov->covered_functions.nodes[chain];
-		while (node) 
+        node = pCov->covered_functions.nodes[chain];
+        while (node) 
         {
             if (NULL !=  node->key && NULL !=  node->value)
             {
@@ -59,9 +59,9 @@ bool GB_coverage_write_result(GB_coverage* pCov, char* pPath)
                 fprintf(pCoverageFile,"0x%08x:%u\n", key, value);
             }
             next = node->next;
-			node = next;
-		}
-	}
+            node = next;
+        }
+    }
 
     fflush(pCoverageFile);
     fclose(pCoverageFile);
